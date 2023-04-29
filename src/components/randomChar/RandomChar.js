@@ -2,7 +2,7 @@ import { Component } from 'react';
 
 import MarvelServices from '../../services/MarvelServices';
 import Spiner from '../spiner/Spinner'
-import errorGif from '../../resources/img/error.gif'
+import Error from '../errorGif/ErrorGif';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -21,6 +21,7 @@ class RandomChar extends Component {
     servic = new MarvelServices()
     
     getDataForRndChar = () => {
+        this.setState({loading: true})
         this.servic
             .getOneCharacter(Math.floor(Math.random() * (1011400 - 1011000) + 1011000))
             .then(this.updataChar)
@@ -32,17 +33,17 @@ class RandomChar extends Component {
     }
 
     render() {
-        const {char: {name, descr, thumbnail, detail, wiki}, loading, error} = this.state
+        const {char: {name, descr, thumbnail, detail, wiki, styleImg}, loading, error} = this.state
 
         return (
             <div className="randomchar">
-                {loading ? <Spiner /> : error ? <img src={errorGif} style={{margin: '0 auto', height: 275}} alt='error'/> : (
+                {loading ? <Spiner /> : error ? <Error /> : (
                     <div className="randomchar__block">
-                        <img src={thumbnail} style={{objectFit: thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" ? 'contain' : 'cover'}} alt="Random character" className="randomchar__img"/>
+                        <img src={thumbnail} style={styleImg} alt={name} className="randomchar__img"/>
                         <div className="randomchar__info">
                             <p className="randomchar__name">{name}</p>
                             <p className="randomchar__descr">
-                                {!descr ? "we don't have descr" : descr.length > 210 ? descr.slice(0, 210) + '...' : descr}
+                                {descr}
                             </p>
                             <div className="randomchar__btns">
                                 <a href={detail} className="button button__main">
