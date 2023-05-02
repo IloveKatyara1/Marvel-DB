@@ -62,9 +62,25 @@ class CharList extends Component {
             <div className="char__list">
                 <ul className="char__grid">
                     {loading ? <Spiner /> : error ? <Error /> : charList.map(char => (
-                        <li className="char__item" 
+                        <li className={`char__item ${char.active ? 'char__item_selected' : null}`}
                             key={char.id}
-                            onClick={() => this.props.onChangeCharSelect(char.id)}
+                            onClick={() => {
+                                this.props.onChangeCharSelect(char.id)
+
+                                this.setState({charList: charList.map(character => {
+                                    if(character.id === char.id) {
+                                        return {
+                                            ...character,
+                                            active: true
+                                        }
+                                    }
+
+                                    return {
+                                        ...character,
+                                        active: false
+                                    }
+                                })})
+                            }}
                         >
                             <img src={char.thumbnail} style={char.styleImg}  alt={char.name}/>
                             <div className="char__name">{char.name.length >= 36 ? char.name.slice(1, 36) + '...' : char.name}</div>
