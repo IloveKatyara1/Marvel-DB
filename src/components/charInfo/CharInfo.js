@@ -59,10 +59,14 @@ class CharInfo extends Component {
                             <div>
                                 <div className="char__info-name">{char.name}</div>
                                 <div className="char__btns">
-                                    <a href={char.detail} className="button button__main">
+                                    <a href={char.detail} 
+                                    className="button button__main"
+                                    tabIndex={6}>
                                         <div className="inner">homepage</div>
                                     </a>
-                                    <a href={char.wiki} className="button button__secondary">
+                                    <a href={char.wiki} 
+                                    className="button button__secondary"
+                                    tabIndex={7}>
                                         <div className="inner">Wiki</div>
                                     </a>
                                 </div>
@@ -86,6 +90,7 @@ class CharInfo extends Component {
                                 char.comics.length >= 10 
                                 && (<button onClick={this.toogleLoadedComics} 
                                         className='load_more'
+                                        tabIndex={8}
                                     >
                                         {!loadedComics ? 'show more...' : 'hide'}
                                     </button>)

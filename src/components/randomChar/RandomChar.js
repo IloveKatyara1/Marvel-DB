@@ -46,10 +46,10 @@ class RandomChar extends Component {
                                 {descr}
                             </p>
                             <div className="randomchar__btns">
-                                <a href={detail} className="button button__main">
+                                <a href={detail} className="button button__main" tabIndex={3}>
                                     <div className="inner">homepage</div>
                                 </a>
-                                <a href={wiki} className="button button__secondary">
+                                <a href={wiki} className="button button__secondary" tabIndex={4}>
                                     <div className="inner">Wiki</div>
                                 </a>
                             </div>
@@ -65,7 +65,8 @@ class RandomChar extends Component {
                         Or choose another one
                     </p>
                     <button className="button button__main"
-                        onClick={this.getDataForRndChar}>
+                        onClick={this.getDataForRndChar}
+                        tabIndex={5}>
                         <div className="inner">try it</div>
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>

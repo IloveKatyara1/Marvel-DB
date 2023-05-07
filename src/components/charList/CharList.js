@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import MarvelServices from '../../services/MarvelServices';
@@ -54,32 +54,40 @@ class CharList extends Component {
         })))
         .catch(() => this.setState({error: true, loading: false}))
     }
-    
+
+    lastActiveChar
+    itemsRef = []
+
+    setRef = (ref) => {
+        this.itemsRef.push(ref)
+    }
+
+    changeActiveChar = (num) => {
+        this.itemsRef[num].classList.add('char__item_selected')
+        if(this.lastActiveChar) this.itemsRef[this.lastActiveChar].classList.remove('char__item_selected')
+        this.lastActiveChar = num
+    }    
+
     render() {
         const {charList, loading, error, charEnded, btnLoading} = this.state
 
         return (
             <div className="char__list">
                 <ul className="char__grid">
-                    {loading ? <Spiner /> : error ? <Error /> : charList.map(char => (
-                        <li className={`char__item ${char.active ? 'char__item_selected' : null}`}
+                    {loading ? <Spiner /> : error ? <Error /> : charList.map((char, i) => (
+                        <li className='char__item'
                             key={char.id}
+                            ref={this.setRef}
+                            tabIndex={i + 8}
                             onClick={() => {
                                 this.props.onChangeCharSelect(char.id)
-
-                                this.setState({charList: charList.map(character => {
-                                    if(character.id === char.id) {
-                                        return {
-                                            ...character,
-                                            active: true
-                                        }
-                                    }
-
-                                    return {
-                                        ...character,
-                                        active: false
-                                    }
-                                })})
+                                this.changeActiveChar(i)
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    this.changeActiveChar(i);
+                                    this.props.onChangeCharSelect(char.id);
+                                }
                             }}
                         >
                             <img src={char.thumbnail} style={char.styleImg}  alt={char.name}/>
