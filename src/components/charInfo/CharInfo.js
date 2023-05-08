@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Skeleton from '../skeleton/Skeleton'
@@ -8,101 +8,89 @@ import MarvelServices from '../../services/MarvelServices';
 
 import './charInfo.scss';
 
-class CharInfo extends Component {
-    state = {
-        char: null,
-        loading: false,
-        error: false,
-        loadedComics: false
-    }
+const CharInfo = (props) => {
+    const [char, setChar] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
+    const [loadedComics, setLoadedComics] = useState(false)
 
-    componentDidUpdate(prevProp) {
-        if(prevProp.charSelect !== this.props.charSelect) {
-            this.setState({loadedComics: false})
-            this.getCharData()
-        }
-    }
+    const servic = new MarvelServices()
 
-    getCharData = () => {
-        if(!this.props.charSelect) return
+    useEffect(() => getCharData(), [props.charSelect])
 
-        const servic = new MarvelServices()
+    const getCharData = () => {
+        if(!props.charSelect) return
 
-        this.setState({loading: true})
+        setLoading(true)
         servic
-            .getOneCharacter(this.props.charSelect)
-            .then((char) => this.setState({char, loading: false}))
-            .catch(() => this.setState({loading: false, error: true}))
+            .getOneCharacter(props.charSelect)
+            .then((char) => setChar(char))
+            .catch(() => setError(true))
+            .finally(() => setLoading(false))
     }
 
-    toogleLoadedComics = () => this.setState(({loadedComics}) => ({
-        loadedComics: !loadedComics
-    })) 
+    const toogleLoadedComics = () => setLoadedComics(loadedComics => !loadedComics)
 
-    render() {
-        const {error, loading, char, loadedComics} = this.state
+    const skeleton = error || loading || char ? null : <Skeleton />
+    const errorMasege = error ? <Error /> : null
+    const spiner = loading ? <Spinner /> : null
+    const content = (!error && !loading && char) ? true : null
 
-        const skeleton = error || loading || char ? null : <Skeleton />
-        const errorMasege = error ? <Error /> : null
-        const spiner = loading ? <Spinner /> : null
-        const content = (!error && !loading && char) ? true : null
-
-        return (
-            <div className="char__info">
-                {skeleton}
-                {errorMasege}
-                {spiner}
-                {content && (
-                    <>
-                        <div className="char__basics">
-                            <img src={char.thumbnail} style={char.styleImg} alt={char.name}/>
-                            <div>
-                                <div className="char__info-name">{char.name}</div>
-                                <div className="char__btns">
-                                    <a href={char.detail} 
-                                    className="button button__main"
-                                    tabIndex={6}>
-                                        <div className="inner">homepage</div>
-                                    </a>
-                                    <a href={char.wiki} 
-                                    className="button button__secondary"
-                                    tabIndex={7}>
-                                        <div className="inner">Wiki</div>
-                                    </a>
-                                </div>
+    return (
+        <div className="char__info">
+            {skeleton}
+            {errorMasege}
+            {spiner}
+            {content && (
+                <>
+                    <div className="char__basics">
+                        <img src={char.thumbnail} style={char.styleImg} alt={char.name}/>
+                        <div>
+                            <div className="char__info-name">{char.name}</div>
+                            <div className="char__btns">
+                                <a href={char.detail} 
+                                className="button button__main"
+                                tabIndex={6}>
+                                    <div className="inner">homepage</div>
+                                </a>
+                                <a href={char.wiki} 
+                                className="button button__secondary"
+                                tabIndex={7}>
+                                    <div className="inner">Wiki</div>
+                                </a>
                             </div>
                         </div>
-                        <div className="char__descr">
-                            {char.descr}
-                        </div>
-                        <div className="char__comics">Comics:</div>
-                        <ul className="char__comics-list">
-                            {char.comics.map((item, i) => {
-                                // eslint-disable-next-line
-                                if(i >= 10 && !loadedComics) return
-                                
-                                return (
-                                    <li className="char__comics-item" key={i}>
-                                        {item.name}
-                                    </li>
-                                )
-                            })} {
-                                char.comics.length >= 10 
-                                && (<button onClick={this.toogleLoadedComics} 
-                                        className='load_more'
-                                        tabIndex={8}
-                                    >
-                                        {!loadedComics ? 'show more...' : 'hide'}
-                                    </button>)
-                            } {
-                                char.comics.length === 0 && (<h3>here is no comics</h3>)
-                            }
-                        </ul>
-                    </>
-                )}
-            </div>
-        )
-    }
+                    </div>
+                    <div className="char__descr">
+                        {char.descr}
+                    </div>
+                    <div className="char__comics">Comics:</div>
+                    <ul className="char__comics-list">
+                        {char.comics.map((item, i) => {
+                            // eslint-disable-next-line
+                            if(i >= 10 && !loadedComics) return
+                            
+                            return (
+                                <li className="char__comics-item" key={i}>
+                                    {item.name}
+                                </li>
+                            )
+                        })} {
+                            char.comics.length >= 10 
+                            && (<button onClick={toogleLoadedComics} 
+                                    className='load_more'
+                                    tabIndex={8}
+                                >
+                                    {!loadedComics ? 'show more...' : 'hide'}
+                                </button>)
+                        } {
+                            char.comics.length === 0 && (<h3>here is no comics</h3>)
+                        }
+                    </ul>
+                </>
+            )}
+        </div>
+    )
 }
 
 CharInfo.propTypes = {

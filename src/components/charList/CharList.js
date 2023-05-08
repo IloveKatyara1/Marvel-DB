@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import MarvelServices from '../../services/MarvelServices';
@@ -7,105 +7,93 @@ import './charList.scss';
 import Spiner from '../spiner/Spinner'
 import Error from '../errorGif/ErrorGif';
 
-class CharList extends Component {
-    state = {
-        charList: [],
-        loading: true,
-        error: false,
-        offset: 250,
-        charEnded: false,
-        btnLoading: true
-    }
+const CharList = (props) => {
+    const [charList, setCharList] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
+    const [offset, setOffset] = useState(250)
+    const [charEnded, setCharEnded] = useState(false)
+    const [btnLoading, setBtnLoading] = useState(true)
 
-    wasMount = false
+    const servic = new MarvelServices() 
+    let wasMount = false
 
-    servic = new MarvelServices() 
+    useEffect(() => {
+        window.addEventListener('scroll', eventListenerScroll)
 
-    componentDidMount() {
-        if(!this.wasMount && !this.state.charList.length) {
-            this.wasMount = true
-            this.setState({loading: true, btnLoading: true})
-            this.addNewChar();
+        if(!wasMount && !charList.length) {
+            wasMount = true
+            setLoading(true)
+            addNewChar();
         }
 
-        window.addEventListener('scroll', this.eventListenerScroll)
-    }
+        return window.removeEventListener('scroll', eventListenerScroll)
+    }, [])
     
-    componentWillUnmount() {
-        window.removeEventListener('scroll', this.eventListenerScroll)
-    }
-    
-    eventListenerScroll = () => {
-        if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1 && !this.state.btnLoading){
-            this.addNewChar();
+    const eventListenerScroll = () => {
+        console.log(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1)
+        if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1 && !btnLoading){
+            addNewChar();
         }
     }
     
-    addNewChar = () => {
-        this.setState({btnLoading: true})
+    const addNewChar = () => {
+        setBtnLoading(true)
 
-        this.servic.getAllCharacter(this.state.offset)
-        .then((res) => this.setState(({charList, offset}) => ({
-            charList: [...charList, ...res],
-            loading: false,
-            offset: offset + 9,
-            charEnded: res.length < 9,
-            btnLoading: false
-        })))
-        .catch(() => this.setState({error: true, loading: false}))
+        servic.getAllCharacter(offset)
+        .then((res) => {
+            setCharList(charList => [...charList, ...res])
+            setOffset(offset => offset + 9)
+            setCharEnded(res.length < 9)
+            setBtnLoading(false)
+        })
+        .catch(() => setError(true))
+        .finally(() => setLoading(false))
     }
 
-    lastActiveChar
-    itemsRef = []
+    let [lastActiveChar, setLastActiveChar] = useState()
+    const itemsRef = useRef([])
 
-    setRef = (ref) => {
-        this.itemsRef.push(ref)
-    }
-
-    changeActiveChar = (num) => {
-        this.itemsRef[num].classList.add('char__item_selected')
-        if(this.lastActiveChar) this.itemsRef[this.lastActiveChar].classList.remove('char__item_selected')
-        this.lastActiveChar = num
-    }    
-
-    render() {
-        const {charList, loading, error, charEnded, btnLoading} = this.state
-
-        return (
-            <div className="char__list">
-                <ul className="char__grid">
-                    {loading ? <Spiner /> : error ? <Error /> : charList.map((char, i) => (
-                        <li className='char__item'
-                            key={char.id}
-                            ref={this.setRef}
-                            tabIndex={i + 8}
-                            onClick={() => {
-                                this.props.onChangeCharSelect(char.id)
-                                this.changeActiveChar(i)
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    this.changeActiveChar(i);
-                                    this.props.onChangeCharSelect(char.id);
-                                }
-                            }}
-                        >
-                            <img src={char.thumbnail} style={char.styleImg}  alt={char.name}/>
-                            <div className="char__name">{char.name.length >= 36 ? char.name.slice(1, 36) + '...' : char.name}</div>
-                        </li> 
-                    ))}
-                </ul>
-                <button 
-                    className='button button__main button__long'
-                    onClick={this.addNewChar}
-                    disabled={btnLoading}
-                    style={{display: charEnded ? 'none' : 'block'}}
-                >
-                    <div className="inner">load more</div>
-                </button>
-            </div>
-        )
-    }
+    const changeActiveChar = (num) => {
+        itemsRef.current[num].classList.add('char__item_selected')
+        if(lastActiveChar) itemsRef.current[lastActiveChar].classList.remove('char__item_selected')
+        setLastActiveChar(num)
+    } 
+      
+    return (
+        <div className="char__list">
+            <ul className="char__grid">
+                {loading ? <Spiner /> : error ? <Error /> : charList.map((char, i) => (
+                    <li className='char__item'
+                        key={char.id}
+                        ref={el => itemsRef.current[i] = el}
+                        tabIndex={i + 8}
+                        onClick={() => {
+                            props.onChangeCharSelect(char.id)
+                            changeActiveChar(i)
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                changeActiveChar(i);
+                                props.onChangeCharSelect(char.id);
+                            }
+                        }}
+                    >
+                        <img src={char.thumbnail} style={char.styleImg}  alt={char.name}/>
+                        <div className="char__name">{char.name.length >= 36 ? char.name.slice(1, 36) + '...' : char.name}</div>
+                    </li> 
+                ))}
+            </ul>
+            <button 
+                className='button button__main button__long'
+                onClick={addNewChar}
+                disabled={btnLoading}
+                style={{display: charEnded ? 'none' : 'block'}}
+            >
+                <div className="inner">load more</div>
+            </button>
+        </div>
+    )
 }
 
 CharList.propTypes = {
