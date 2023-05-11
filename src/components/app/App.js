@@ -1,37 +1,37 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import AppHeader from "../appHeader/AppHeader";
-import RandomChar from "../randomChar/RandomChar";
-import CharList from "../charList/CharList";
-import CharInfo from "../charInfo/CharInfo";
-import ErrorBoundary from "../errorBoundary/ErrorBoundary";
+import AppHeader from '../appHeader/AppHeader';
+import RandomChar from '../randomChar/RandomChar';
+import CharList from '../charList/CharList';
+import CharInfo from '../charInfo/CharInfo';
+import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 
 import decoration from '../../resources/img/vision.png';
 
 const App = () => {
-    const [charSelect, setCharSelect] = useState(null)
+    const [charSelect, setCharSelect] = useState(null);
 
-    const onChangeCharSelect = (id) => setCharSelect(id)
+    const onChangeCharSelect = (id) => setCharSelect(id);
 
     return (
         <div className="app">
-            <AppHeader/>
+            <AppHeader />
             <main>
                 <ErrorBoundary>
-                    <RandomChar/>
+                    <RandomChar />
                 </ErrorBoundary>
                 <div className="char__content">
                     <ErrorBoundary>
-                        <CharList onChangeCharSelect={onChangeCharSelect}/>
+                        <CharList onChangeCharSelect={onChangeCharSelect} />
                     </ErrorBoundary>
                     <ErrorBoundary>
-                        <CharInfo charSelect={charSelect}/>
+                        <CharInfo charSelect={charSelect} />
                     </ErrorBoundary>
                 </div>
-                <img className="bg-decoration" src={decoration} alt="vision"/>
+                <img className="bg-decoration" src={decoration} alt="vision" />
             </main>
         </div>
-    )
-}
+    );
+};
 
 export default App;
