@@ -13,7 +13,7 @@ const CharList = (props) => {
     const [charEnded, setCharEnded] = useState(false);
     const [btnLoading, setBtnLoading] = useState(true);
 
-    const { getAllCharacter, error, loading } = useMarvelServices();
+    const { getAllCharacterOrComics, error, loading } = useMarvelServices();
     let wasMount = false;
 
     useEffect(() => {
@@ -21,18 +21,15 @@ const CharList = (props) => {
             wasMount = true;
             addNewChar();
         }
-
-        return () => {
-            wasMount = false;
-        };
     }, []);
 
     const addNewChar = async () => {
         setBtnLoading(true);
 
-        getAllCharacter(offset).then((res) => {
+        getAllCharacterOrComics('characters', offset).then((res) => {
             setCharList((charList) => [...charList, ...res]);
             setOffset((offset) => offset + 9);
+            console.log(res);
             setCharEnded(res.length < 9);
             setBtnLoading(false);
         });

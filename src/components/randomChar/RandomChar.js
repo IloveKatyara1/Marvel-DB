@@ -12,7 +12,7 @@ const RandomChar = (props) => {
 
     useEffect(() => getDataForRndChar(), []);
 
-    const { getOneCharacter, error, loading } = useMarvelServices();
+    const { getOneCharacter, error, loading, resetError } = useMarvelServices();
 
     const getDataForRndChar = () => {
         getOneCharacter(Math.floor(Math.random() * (1011400 - 1011000) + 1011000)).then(setChar);
@@ -48,7 +48,13 @@ const RandomChar = (props) => {
                     Do you want to get to know him better?
                 </p>
                 <p className="randomchar__title">Or choose another one</p>
-                <button className="button button__main" onClick={getDataForRndChar} tabIndex={5}>
+                <button
+                    className="button button__main"
+                    onClick={() => {
+                        resetError();
+                        getDataForRndChar();
+                    }}
+                    tabIndex={5}>
                     <div className="inner">try it</div>
                 </button>
                 <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />

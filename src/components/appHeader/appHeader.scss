@@ -22,7 +22,17 @@
             line-height: 32px;
             li {
                 margin: 0 8px;
-                a:hover {
+                button {
+                    font-weight: bold;
+                    font-size: 24px;
+                    line-height: 32px;
+                    border: none;
+                    background-color: #fff;
+                }
+                button:hover {
+                    color: $main-color;
+                }
+                .active {
                     color: $main-color;
                 }
             }

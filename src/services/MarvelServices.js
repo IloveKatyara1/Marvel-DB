@@ -3,24 +3,30 @@ import { useHttp } from '../hooks/http.hook';
 const useMarvelServices = () => {
     const _apiUrl = 'https://gateway.marvel.com:443/v1/public/';
     const _apiKey = 'apikey=d5d627eb28d69a7a44dd190b11e467a1';
-    const _offset = 250;
 
     const { error, loading, getData, resetError } = useHttp();
 
-    const getAllCharacter = async (offset = _offset) => {
-        const res = await getData(`${_apiUrl}characters?limit=9&offset=${offset}&${_apiKey}`);
-        return res.data.results.map((char) => {
+    const getAllCharacterOrComics = async (charterOrComics, offset, limit = 9) => {
+        const res = await getData(`${_apiUrl}${charterOrComics}?limit=${limit}&offset=${offset}&${_apiKey}`);
+        console.log();
+        return res.data.results.map((data) => {
             return {
-                name: char.name,
-                thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
-                id: char.id,
+                name: charterOrComics === 'characters' ? data.name : data.title,
+                thumbnail: data.thumbnail.path + '.' + data.thumbnail.extension,
+                id: data.id,
                 styleImg: {
                     objectFit:
-                        char.thumbnail.path + '.' + char.thumbnail.extension ===
+                        data.thumbnail.path + '.' + data.thumbnail.extension ===
                         'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
                             ? 'contain'
                             : 'cover',
                 },
+                price:
+                    charterOrComics === 'comics'
+                        ? data.prices[0].price
+                            ? data.prices[0].price + '$'
+                            : 'NOT AVAIBLE'
+                        : null,
             };
         });
     };
@@ -52,7 +58,7 @@ const useMarvelServices = () => {
         };
     };
 
-    return { getOneCharacter, getAllCharacter, error, loading };
+    return { getOneCharacter, getAllCharacterOrComics, error, loading, resetError };
 };
 
 export default useMarvelServices;
