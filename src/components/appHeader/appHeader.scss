@@ -22,18 +22,16 @@
             line-height: 32px;
             li {
                 margin: 0 8px;
-                button {
+                a {
                     font-weight: bold;
                     font-size: 24px;
                     line-height: 32px;
-                    border: none;
-                    background-color: #fff;
                 }
-                button:hover {
+                a:hover {
                     color: $main-color;
                 }
                 .active {
-                    color: $main-color;
+                    color: #9f0013;
                 }
             }
         }

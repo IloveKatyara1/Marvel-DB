@@ -29,7 +29,6 @@ const CharList = (props) => {
         getAllCharacterOrComics('characters', offset).then((res) => {
             setCharList((charList) => [...charList, ...res]);
             setOffset((offset) => offset + 9);
-            console.log(res);
             setCharEnded(res.length < 9);
             setBtnLoading(false);
         });

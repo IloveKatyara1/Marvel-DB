@@ -8,7 +8,7 @@ import Spiner from '../spiner/Spinner';
 import Error from '../errorGif/ErrorGif';
 
 const ComicsList = () => {
-    const [offset, setOffset] = useState(0);
+    const [offset, setOffset] = useState(128);
     const [comicsList, setComicsList] = useState([]);
     const [comicsEnded, setComicsEnded] = useState(false);
     const [btnLoading, setBtnLoading] = useState(true);
