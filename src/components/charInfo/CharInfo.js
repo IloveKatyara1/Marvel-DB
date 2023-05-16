@@ -12,14 +12,14 @@ const CharInfo = (props) => {
     const [char, setChar] = useState(null);
     const [loadedComics, setLoadedComics] = useState(false);
 
-    const { getOneCharacter, error, loading } = useMarvelServices();
+    const { getOneElement, error, loading } = useMarvelServices();
 
     useEffect(() => getCharData(), [props.charSelect]);
 
     const getCharData = () => {
         if (!props.charSelect) return;
 
-        getOneCharacter(props.charSelect).then((char) => setChar(char));
+        getOneElement(props.charSelect).then((char) => setChar(char));
     };
 
     const toogleLoadedComics = () => setLoadedComics((loadedComics) => !loadedComics);
@@ -62,12 +62,12 @@ const CharInfo = (props) => {
                                     {item.name}
                                 </li>
                             );
-                        })}{' '}
+                        })}
                         {char.comics.length >= 10 && (
                             <button onClick={toogleLoadedComics} className="load_more" tabIndex={8}>
                                 {!loadedComics ? 'show more...' : 'hide'}
                             </button>
-                        )}{' '}
+                        )}
                         {char.comics.length === 0 && <h3>here is no comics</h3>}
                     </ul>
                 </>

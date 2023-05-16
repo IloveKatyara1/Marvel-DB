@@ -12,10 +12,10 @@ const RandomChar = (props) => {
 
     useEffect(() => getDataForRndChar(), []);
 
-    const { getOneCharacter, error, loading, resetError } = useMarvelServices();
+    const { getOneElement, error, loading, resetError } = useMarvelServices();
 
     const getDataForRndChar = () => {
-        getOneCharacter(Math.floor(Math.random() * (1011400 - 1011000) + 1011000)).then(setChar);
+        getOneElement(Math.floor(Math.random() * (1011400 - 1011000) + 1011000)).then(setChar);
     };
 
     return (

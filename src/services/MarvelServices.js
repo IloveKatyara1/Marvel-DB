@@ -8,7 +8,6 @@ const useMarvelServices = () => {
 
     const getAllCharacterOrComics = async (charterOrComics, offset, limit = 9) => {
         const res = await getData(`${_apiUrl}${charterOrComics}?limit=${limit}&offset=${offset}&${_apiKey}`);
-        console.log();
         return res.data.results.map((data) => {
             return {
                 name: charterOrComics === 'characters' ? data.name : data.title,
@@ -31,34 +30,47 @@ const useMarvelServices = () => {
         });
     };
 
-    const getOneCharacter = async (id) => {
-        const res = await getData(`${_apiUrl}characters/${id}?${_apiKey}`);
-        return _recordingDataRandomChar(res.data.results[0]);
+    const getOneElement = async (id, charterOrComics = 'characters') => {
+        const res = await getData(`${_apiUrl}${charterOrComics}/${id}?${_apiKey}`);
+        return _recordingDataRandomChar(res.data.results[0], charterOrComics);
     };
 
-    const _recordingDataRandomChar = (char) => {
-        return {
-            name: char.name,
-            descr: !char.descr
-                ? "we don't have descr"
-                : char.descr.length > 210
-                ? char.descr.slice(0, 210) + '...'
-                : char.descr,
-            thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
-            detail: char.urls[0].url,
-            wiki: char.urls[1].url,
-            comics: char.comics.items,
-            styleImg: {
-                objectFit:
-                    char.thumbnail.path + '.' + char.thumbnail.extension ===
-                    'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
-                        ? 'contain'
-                        : 'cover',
-            },
-        };
+    const _recordingDataRandomChar = (data, charterOrComics) => {
+        if (charterOrComics === 'characters') {
+            return {
+                name: data.name,
+                descr: !data.descr
+                    ? "we don't have descr"
+                    : data.descr.length > 210
+                    ? data.descr.slice(0, 210) + '...'
+                    : data.descr,
+                thumbnail: data.thumbnail.path + '.' + data.thumbnail.extension,
+                detail: data.urls[0].url,
+                wiki: data.urls[1].url,
+                comics: data.comics.items,
+                styleImg: {
+                    objectFit:
+                        data.thumbnail.path === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available'
+                            ? 'contain'
+                            : 'cover',
+                },
+            };
+        } else {
+            return {
+                name: data.title,
+                descr: !data.descr
+                    ? "we don't have descr"
+                    : data.descr.length > 210
+                    ? data.descr.slice(0, 210) + '...'
+                    : data.descr,
+                thumbnail: data.thumbnail.path + '.' + data.thumbnail.extension,
+                price: data.prices[0].price ? data.prices[0].price + '$' : 'NOT AVAIBLE',
+                pageCount: data.pageCount ? data.pageCount + 'pages' : 'NOT AVAIBLE',
+            };
+        }
     };
 
-    return { getOneCharacter, getAllCharacterOrComics, error, loading, resetError };
+    return { getOneElement, getAllCharacterOrComics, error, loading, resetError };
 };
 
 export default useMarvelServices;
