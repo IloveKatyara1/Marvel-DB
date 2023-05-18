@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 
 import Skeleton from '../skeleton/Skeleton';
@@ -8,7 +8,7 @@ import useMarvelServices from '../../services/MarvelServices';
 
 import './charInfo.scss';
 
-const CharInfo = (props) => {
+const CharInfo = memo((props) => {
     const [char, setChar] = useState(null);
     const [loadedComics, setLoadedComics] = useState(false);
 
@@ -74,7 +74,7 @@ const CharInfo = (props) => {
             )}
         </div>
     );
-};
+});
 
 CharInfo.propTypes = {
     charSelect: PropTypes.number,

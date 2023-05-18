@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import RandomChar from '../randomChar/RandomChar';
 import CharList from '../charList/CharList';
@@ -7,7 +7,7 @@ import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 
 import decoration from '../../resources/img/vision.png';
 
-const MainPage = () => {
+const MainPage = ({ charList, setCharList, offset, setOffset }) => {
     const [charSelect, setCharSelect] = useState(null);
 
     const onChangeCharSelect = (id) => setCharSelect(id);
@@ -19,7 +19,13 @@ const MainPage = () => {
             </ErrorBoundary>
             <div className="char__content">
                 <ErrorBoundary>
-                    <CharList onChangeCharSelect={onChangeCharSelect} />
+                    <CharList
+                        onChangeCharSelect={onChangeCharSelect}
+                        charList={charList}
+                        setCharList={setCharList}
+                        offset={offset}
+                        setOffset={setOffset}
+                    />
                 </ErrorBoundary>
                 <ErrorBoundary>
                     <CharInfo charSelect={charSelect} />

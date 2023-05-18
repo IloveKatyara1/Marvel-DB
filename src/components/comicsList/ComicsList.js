@@ -8,18 +8,16 @@ import './comicsList.scss';
 import Spiner from '../spiner/Spinner';
 import Error from '../errorGif/ErrorGif';
 
-const ComicsList = () => {
-    const [offset, setOffset] = useState(120);
-    const [comicsList, setComicsList] = useState([]);
+const ComicsList = ({ setComicsList, comicsList, offset, setOffset }) => {
     const [comicsEnded, setComicsEnded] = useState(false);
-    const [btnLoading, setBtnLoading] = useState(true);
+    const [btnLoading, setBtnLoading] = useState(false);
 
     const { error, loading, getAllCharacterOrComics } = useMarvelServices();
 
     let wasMount;
 
     useEffect(() => {
-        if (!wasMount) {
+        if (!wasMount && !comicsList.length) {
             wasMount = true;
             getAllComics();
         }
