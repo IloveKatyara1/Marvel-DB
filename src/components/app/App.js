@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { createContext, lazy, Suspense, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import AppHeader from '../appHeader/AppHeader';
@@ -9,11 +9,12 @@ const ComicsPage = lazy(() => import('../pages/ComicsPage'));
 const Error404 = lazy(() => import('../pages/Error404'));
 const SingleComicPage = lazy(() => import('../pages/singleComicPage/SingleComicPage'));
 
+export const charListContext = createContext();
+export const comicsListContext = createContext();
+
 const App = () => {
     const [comicsList, setComicsList] = useState([]);
     const [charList, setCharList] = useState([]);
-    const [offsetComics, setOffsetComics] = useState(120);
-    const [offsetChars, setOffsetChars] = useState(250);
 
     return (
         <Router>
@@ -25,23 +26,17 @@ const App = () => {
                             <Route
                                 path="/"
                                 element={
-                                    <MainPage
-                                        charList={charList}
-                                        setCharList={setCharList}
-                                        offset={offsetChars}
-                                        setOffset={setOffsetChars}
-                                    />
+                                    <charListContext.Provider value={{ charList, setCharList }}>
+                                        <MainPage />
+                                    </charListContext.Provider>
                                 }
                             />
                             <Route
                                 path="/comics"
                                 element={
-                                    <ComicsPage
-                                        comicsList={comicsList}
-                                        setComicsList={setComicsList}
-                                        offset={offsetComics}
-                                        setOffset={setOffsetComics}
-                                    />
+                                    <comicsListContext.Provider value={{ comicsList, setComicsList }}>
+                                        <ComicsPage />
+                                    </comicsListContext.Provider>
                                 }
                             />
                             <Route path="/comics/:comicId" element={<SingleComicPage />} />
