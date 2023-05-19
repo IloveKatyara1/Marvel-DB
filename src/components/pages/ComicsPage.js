@@ -2,11 +2,11 @@ import ComicsList from '../comicsList/ComicsList';
 import AppBaner from '../appBanner/AppBanner';
 import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 
-const ComicsPage = ({ comicsList, setComicsList, offset, setOffset }) => (
+const ComicsPage = () => (
     <>
         <AppBaner />
         <ErrorBoundary>
-            <ComicsList comicsList={comicsList} setComicsList={setComicsList} offset={offset} setOffset={setOffset} />
+            <ComicsList />
         </ErrorBoundary>
     </>
 );

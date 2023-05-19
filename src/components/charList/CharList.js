@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import useMarvelServices from '../../services/MarvelServices';
@@ -6,10 +6,14 @@ import useMarvelServices from '../../services/MarvelServices';
 import './charList.scss';
 import Spiner from '../spiner/Spinner';
 import Error from '../errorGif/ErrorGif';
+import { charListContext } from '../app/App';
 
-const CharList = ({ charList, setCharList, onChangeCharSelect, offset, setOffset }) => {
+const CharList = ({ onChangeCharSelect }) => {
+    const { setCharList, charList } = useContext(charListContext);
+
     const [charEnded, setCharEnded] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
+    const [offset, setOffset] = useState(250 + charList.length);
 
     const { getAllCharacterOrComics, error, loading } = useMarvelServices();
     let wasMount = false;

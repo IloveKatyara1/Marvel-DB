@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import useMarvelServices from '../../services/MarvelServices';
@@ -7,10 +7,14 @@ import './comicsList.scss';
 
 import Spiner from '../spiner/Spinner';
 import Error from '../errorGif/ErrorGif';
+import { comicsListContext } from '../app/App';
 
-const ComicsList = ({ setComicsList, comicsList, offset, setOffset }) => {
+const ComicsList = () => {
+    const { setComicsList, comicsList } = useContext(comicsListContext);
+
     const [comicsEnded, setComicsEnded] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
+    const [offset, setOffset] = useState(120 + comicsList.length);
 
     const { error, loading, getAllCharacterOrComics } = useMarvelServices();
 
