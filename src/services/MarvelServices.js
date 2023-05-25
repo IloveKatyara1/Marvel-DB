@@ -35,6 +35,15 @@ const useMarvelServices = () => {
         return _recordingDataRandomChar(res.data.results[0], charterOrComics);
     };
 
+    const getCharByName = async (name) => {
+        const res = await getData(`${_apiUrl}characters?name=${name}&${_apiKey}`);
+        return {
+            name: res.name,
+            descr: !res.descr ? "we don't have descr" : res.descr,
+            thumbnail: res.thumbnail.path + '.' + res.thumbnail.extension,
+        };
+    };
+
     const _recordingDataRandomChar = (data, charterOrComics) => {
         if (charterOrComics === 'characters') {
             return {
@@ -58,11 +67,7 @@ const useMarvelServices = () => {
         } else {
             return {
                 name: data.title,
-                descr: !data.descr
-                    ? "we don't have descr"
-                    : data.descr.length > 210
-                    ? data.descr.slice(0, 210) + '...'
-                    : data.descr,
+                descr: !data.descr ? "we don't have descr" : data.descr,
                 thumbnail: data.thumbnail.path + '.' + data.thumbnail.extension,
                 price: data.prices[0].price ? data.prices[0].price + '$' : 'NOT AVAIBLE',
                 pageCount: data.pageCount ? data.pageCount + 'pages' : 'NOT AVAIBLE',
@@ -70,7 +75,7 @@ const useMarvelServices = () => {
         }
     };
 
-    return { getOneElement, getAllCharacterOrComics, error, loading, resetError };
+    return { getOneElement, getAllCharacterOrComics, error, loading, resetError, getCharByName };
 };
 
 export default useMarvelServices;

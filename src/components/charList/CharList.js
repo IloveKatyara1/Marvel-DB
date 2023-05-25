@@ -15,6 +15,10 @@ const CharList = ({ onChangeCharSelect }) => {
     const [charEnded, setCharEnded] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
     const [offset, setOffset] = useState(250 + charList.length);
+
+    let [lastActiveChar, setLastActiveChar] = useState();
+    const itemsRef = useRef([]);
+
     const [charListComponent, setCharListComponent] = useState(
         charList.map((char, i) => (
             <li
@@ -61,7 +65,7 @@ const CharList = ({ onChangeCharSelect }) => {
                     setCharListComponent((prevCharListComponent) => {
                         const updatedListComponent = [...prevCharListComponent];
                         updatedListComponent.push(
-                            <CSSTransition timeout={500} classNames="char__item">
+                            <CSSTransition timeout={500} classNames="char__item" key={char.id} in={true}>
                                 <li
                                     className="char__item"
                                     key={char.id}
@@ -91,10 +95,8 @@ const CharList = ({ onChangeCharSelect }) => {
         });
     };
 
-    let [lastActiveChar, setLastActiveChar] = useState();
-    const itemsRef = useRef([]);
-
     const changeActiveChar = (num) => {
+        console.log(num, 'num', lastActiveChar, 'lastActiveChar', itemsRef, 'itemsRef');
         if (lastActiveChar === num) return;
 
         itemsRef.current[num].classList.add('char__item_selected');

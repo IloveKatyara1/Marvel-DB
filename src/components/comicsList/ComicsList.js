@@ -54,7 +54,11 @@ const ComicsList = () => {
                         const updataComicsListComponent = [...prevComicsListComponent];
 
                         updataComicsListComponent.push(
-                            <CSSTransition timeout={500} classNames="comics__item">
+                            <CSSTransition
+                                timeout={500}
+                                classNames="comics__item"
+                                key={updataComicsListComponent.length}
+                                in={true}>
                                 <li
                                     className="comics__item"
                                     key={updataComicsListComponent.length}
