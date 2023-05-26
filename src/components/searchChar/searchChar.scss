@@ -7,6 +7,11 @@
     box-sizing: border-box;
     margin-top: 30px;
 
+    form {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
     &__input {
         width: 250px;
         height: 38px;
@@ -26,6 +31,34 @@
         font-style: normal;
         font-weight: 700;
         font-size: 18px;
-        color: #000000;
+    }
+
+    .message {
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 21px;
+        margin-top: 20px;
+    }
+
+    .message-error {
+        color: #9f0013;
+    }
+
+    .message-successful {
+        color: #03710e;
+    }
+
+    &_btn-group {
+        display: block;
+        flex-direction: column;
+        width: 101px;
+
+        .button__main {
+            margin-top: 10px;
+        }
+
+        .button__secondary {
+            margin-top: 15px;
+        }
     }
 }

@@ -16,7 +16,6 @@ const CharList = ({ onChangeCharSelect }) => {
     const [btnLoading, setBtnLoading] = useState(false);
     const [offset, setOffset] = useState(250 + charList.length);
 
-    let [lastActiveChar, setLastActiveChar] = useState();
     const itemsRef = useRef([]);
 
     const [charListComponent, setCharListComponent] = useState(
@@ -96,12 +95,8 @@ const CharList = ({ onChangeCharSelect }) => {
     };
 
     const changeActiveChar = (num) => {
-        console.log(num, 'num', lastActiveChar, 'lastActiveChar', itemsRef, 'itemsRef');
-        if (lastActiveChar === num) return;
-
+        itemsRef.current.forEach((el) => el.classList.remove('char__item_selected'));
         itemsRef.current[num].classList.add('char__item_selected');
-        if (lastActiveChar) itemsRef.current[lastActiveChar].classList.remove('char__item_selected');
-        setLastActiveChar(num);
     };
 
     const loadingComponent = loading && !charList.length ? <Spiner /> : null;

@@ -36,12 +36,20 @@ const useMarvelServices = () => {
     };
 
     const getCharByName = async (name) => {
-        const res = await getData(`${_apiUrl}characters?name=${name}&${_apiKey}`);
-        return {
-            name: res.name,
-            descr: !res.descr ? "we don't have descr" : res.descr,
-            thumbnail: res.thumbnail.path + '.' + res.thumbnail.extension,
-        };
+        try {
+            const data = await getData(`${_apiUrl}characters?name=${name}&${_apiKey}`);
+            const finishRes = data.data.results[0];
+            return {
+                report: `There is! Visit ${name} page?`,
+                name: finishRes.name,
+                descr: !finishRes.descr ? "we don't have descr" : finishRes.descr,
+                thumbnail: finishRes.thumbnail.path + '.' + finishRes.thumbnail.extension,
+            };
+        } catch (e) {
+            return Promise.reject({
+                report: `There is an error or character not found for ${name}`,
+            });
+        }
     };
 
     const _recordingDataRandomChar = (data, charterOrComics) => {
