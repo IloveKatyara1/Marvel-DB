@@ -1,13 +1,19 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import useMarvelServices from '../../services/MarvelServices';
 
+import { singleChar } from '../app/App';
+
 import './searchChar.scss';
+import { Link } from 'react-router-dom';
 
 const SearchChar = () => {
     const { getCharByName } = useMarvelServices();
+
     const [message, setMessage] = useState({});
+
+    const { setDataSingleChar } = useContext(singleChar);
 
     return (
         <div className="search-char">
@@ -24,8 +30,8 @@ const SearchChar = () => {
                 onSubmit={async ({ nameCharacther }) => {
                     message.isChanged = false;
                     await getCharByName(nameCharacther)
-                        .then((data) => setMessage({ text: data.report, error: false }))
-                        .catch((e) => setMessage({ text: e.report, error: true }));
+                        .then((data) => setMessage({ ...data, ...{ error: false } }))
+                        .catch((e) => setMessage({ report: e.report, error: true }));
                 }}>
                 {({ isSubmitting }) => (
                     <Form>
@@ -44,7 +50,7 @@ const SearchChar = () => {
                                 className={`message ${
                                     isSubmitting ? null : message.error ? 'message-error' : 'message-successful'
                                 }`}>
-                                {!message.isChanged ? (!isSubmitting ? message.text : 'Loading...') : null}
+                                {!message.isChanged ? (!isSubmitting ? message.report : 'Loading...') : null}
                             </div>
                         </div>
                         <div className="search-char_btn-group">
@@ -52,9 +58,18 @@ const SearchChar = () => {
                                 <div className="inner">Find</div>
                             </button>
                             {message.error === false && !message.isChanged && (
-                                <button className="button button__secondary">
-                                    <div className="inner">To page</div>
-                                </button>
+                                <Link to={`charther/${message.name}`}>
+                                    <button
+                                        onClick={() =>
+                                            setDataSingleChar({
+                                                ...message,
+                                                ...{ isFromSearch: true },
+                                            })
+                                        }
+                                        className="button button__secondary">
+                                        <div className="inner">To page</div>
+                                    </button>
+                                </Link>
                             )}
                         </div>
                     </Form>

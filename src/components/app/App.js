@@ -11,10 +11,12 @@ const SingleComicPage = lazy(() => import('../pages/singleComicPage/SingleComicP
 
 export const charListContext = createContext();
 export const comicsListContext = createContext();
+export const singleChar = createContext();
 
 const App = () => {
     const [comicsList, setComicsList] = useState([]);
     const [charList, setCharList] = useState([]);
+    const [dataSingleChar, setDataSingleChar] = useState({});
 
     return (
         <Router>
@@ -27,7 +29,9 @@ const App = () => {
                                 path="/"
                                 element={
                                     <charListContext.Provider value={{ charList, setCharList }}>
-                                        <MainPage />
+                                        <singleChar.Provider value={{ dataSingleChar, setDataSingleChar }}>
+                                            <MainPage />
+                                        </singleChar.Provider>
                                     </charListContext.Provider>
                                 }
                             />
@@ -37,6 +41,14 @@ const App = () => {
                                     <comicsListContext.Provider value={{ comicsList, setComicsList }}>
                                         <ComicsPage />
                                     </comicsListContext.Provider>
+                                }
+                            />
+                            <Route
+                                path="/charther/:chartherName"
+                                element={
+                                    <singleChar.Provider value={{ dataSingleChar, setDataSingleChar }}>
+                                        <SingleComicPage isChar={true} />
+                                    </singleChar.Provider>
                                 }
                             />
                             <Route path="/comics/:comicId" element={<SingleComicPage />} />
