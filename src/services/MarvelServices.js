@@ -42,7 +42,7 @@ const useMarvelServices = () => {
             return {
                 report: `There is! Visit ${name} page?`,
                 name: finishRes.name,
-                descr: !finishRes.descr ? "we don't have descr" : finishRes.descr,
+                descr: !finishRes.description ? "we don't have descr" : finishRes.description,
                 thumbnail: finishRes.thumbnail.path + '.' + finishRes.thumbnail.extension,
             };
         } catch (e) {
@@ -56,11 +56,11 @@ const useMarvelServices = () => {
         if (charterOrComics === 'characters') {
             return {
                 name: data.name,
-                descr: !data.descr
+                descr: !data.description
                     ? "we don't have descr"
-                    : data.descr.length > 210
-                    ? data.descr.slice(0, 210) + '...'
-                    : data.descr,
+                    : data.description.length > 210
+                    ? data.description.slice(0, 210) + '...'
+                    : data.description,
                 thumbnail: data.thumbnail.path + '.' + data.thumbnail.extension,
                 detail: data.urls[0].url,
                 wiki: data.urls[1].url,
@@ -75,7 +75,7 @@ const useMarvelServices = () => {
         } else {
             return {
                 name: data.title,
-                descr: !data.descr ? "we don't have descr" : data.descr,
+                descr: !data.description ? "we don't have descr" : data.description,
                 thumbnail: data.thumbnail.path + '.' + data.thumbnail.extension,
                 price: data.prices[0].price ? data.prices[0].price + '$' : 'NOT AVAIBLE',
                 pageCount: data.pageCount ? data.pageCount + 'pages' : 'NOT AVAIBLE',

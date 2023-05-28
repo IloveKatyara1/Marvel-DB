@@ -45,8 +45,6 @@ const SingleComicPage = ({ isChar }) => {
         <View comic={comic} isChar={isChar} dataSingleChar={dataSingleChar} />
     ) : null;
 
-    // console.log(loading, error, comic, dataSingleChar, 'loading, error, comic, dataSingleChar');
-
     return (
         <>
             <AppBanner />
@@ -59,8 +57,6 @@ const SingleComicPage = ({ isChar }) => {
 
 const View = ({ comic, isChar, dataSingleChar }) => {
     const { name, descr, pageCount, thumbnail, price } = isChar ? dataSingleChar : comic;
-
-    // console.log(name, descr, thumbnail, 'in View name, descr, thumbnail');
 
     return (
         <div className="single-comic">
