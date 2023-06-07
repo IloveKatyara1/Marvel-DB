@@ -8,6 +8,7 @@ const MainPage = lazy(() => import('../pages/MainPage'));
 const ComicsPage = lazy(() => import('../pages/ComicsPage'));
 const Error404 = lazy(() => import('../pages/Error404'));
 const SingleComicPage = lazy(() => import('../pages/singleComicPage/SingleComicPage'));
+const SingleCharPage = lazy(() => import('../pages/singleCharPage/SingleCharPage'));
 
 export const charListContext = createContext();
 export const comicsListContext = createContext();
@@ -47,7 +48,7 @@ const App = () => {
                                 path="/charther/:chartherName"
                                 element={
                                     <singleChar.Provider value={{ dataSingleChar, setDataSingleChar }}>
-                                        <SingleComicPage isChar={true} />
+                                        <SingleCharPage />
                                     </singleChar.Provider>
                                 }
                             />

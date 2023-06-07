@@ -15,7 +15,7 @@ const ComicsList = () => {
 
     const [comicsEnded, setComicsEnded] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
-    const [offset, setOffset] = useState(120 + comicsList.length);
+    const [offset, setOffset] = useState(250 + comicsList.length);
     const [comicsListComponent, setComicsListComponent] = useState(
         comicsList.map((comic, i) => {
             return (

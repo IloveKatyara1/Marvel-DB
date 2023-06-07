@@ -14,13 +14,15 @@ const CharInfo = memo((props) => {
 
     const { getOneElement, error, loading } = useMarvelServices();
 
-    useEffect(() => getCharData(), [props.charSelect]);
-
     const getCharData = () => {
         if (!props.charSelect) return;
 
         getOneElement(props.charSelect).then((char) => setChar(char));
     };
+
+    useEffect(() => {
+        getCharData();
+    }, [props.charSelect]);
 
     const toogleLoadedComics = () => setLoadedComics((loadedComics) => !loadedComics);
 
