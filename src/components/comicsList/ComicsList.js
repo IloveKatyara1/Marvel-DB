@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import useMarvelServices from '../../services/MarvelServices';
+import { setComponentForList } from '../../utils/setComponent';
+
+import SingleComic from './SingleComic';
 
 import './comicsList.scss';
 
-import Spiner from '../spiner/Spinner';
-import Error from '../errorGif/ErrorGif';
 import { comicsListContext } from '../app/App';
 
 const ComicsList = () => {
@@ -16,21 +16,9 @@ const ComicsList = () => {
     const [comicsEnded, setComicsEnded] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
     const [offset, setOffset] = useState(250 + comicsList.length);
-    const [comicsListComponent, setComicsListComponent] = useState(
-        comicsList.map((comic, i) => {
-            return (
-                <li className="comics__item" key={i} tabIndex={4 + i}>
-                    <Link to={`${comic.id}`}>
-                        <img src={comic.thumbnail} alt={comic.name} className="comics__item-img" />
-                        <div className="comics__item-name">{comic.name}</div>
-                        <div className="comics__item-price">{comic.price}</div>
-                    </Link>
-                </li>
-            );
-        })
-    );
+    const [comicsListComponent, setComicsListComponent] = useState([...comicsList]);
 
-    const { error, loading, getAllCharacterOrComics } = useMarvelServices();
+    const { state, setState, getAllCharacterOrComics } = useMarvelServices();
 
     let wasMount;
 
@@ -44,52 +32,46 @@ const ComicsList = () => {
     const getAllComics = () => {
         setBtnLoading(true);
 
-        getAllCharacterOrComics('comics', offset, 8).then((res) => {
-            setComicsList((comicsList) => [...comicsList, ...res]);
-            setOffset((offset) => offset + 8);
-            setBtnLoading(false);
-            res.forEach((comic, i) =>
-                setTimeout(() => {
-                    setComicsListComponent((prevComicsListComponent) => {
-                        const updataComicsListComponent = [...prevComicsListComponent];
+        getAllCharacterOrComics('comics', offset, 8)
+            .then((res) => {
+                setOffset((offset) => offset + 8);
+                setBtnLoading(false);
+                if (res < 8) setComicsEnded(true);
 
-                        updataComicsListComponent.push(
-                            <CSSTransition
-                                timeout={500}
-                                classNames="comics__item"
-                                key={updataComicsListComponent.length}
-                                in={true}>
-                                <li
-                                    className="comics__item"
-                                    key={updataComicsListComponent.length}
-                                    tabIndex={4 + updataComicsListComponent.length}>
-                                    <Link to={`${comic.id}`}>
-                                        <img src={comic.thumbnail} alt={comic.name} className="comics__item-img" />
-                                        <div className="comics__item-name">{comic.name}</div>
-                                        <div className="comics__item-price">{comic.price}</div>
-                                    </Link>
-                                </li>
-                            </CSSTransition>
+                const newComics = res.map((comic, i) => {
+                    return (
+                        <SingleComic
+                            key={comicsListComponent.length + i}
+                            comicsListComponent={comicsListComponent}
+                            i={i}
+                            comic={comic}
+                        />
+                    );
+                });
+
+                setComicsList((comicsList) => [
+                    ...comicsList,
+                    res.map((comic, i) => {
+                        return (
+                            <SingleComic
+                                key={comicsListComponent.length + i}
+                                comicsListComponent={comicsListComponent}
+                                i={i}
+                                comic={comic}
+                                whithoutEffect={true}
+                            />
                         );
+                    }),
+                ]);
 
-                        return updataComicsListComponent;
-                    });
-                }, 100 * i)
-            );
-            if (res < 8) setComicsEnded(true);
-        });
+                setComicsListComponent((comicsListComponent) => [...comicsListComponent, ...newComics]);
+            })
+            .then(() => setState('success'));
     };
-
-    const errorComponent = error ? <Error /> : null;
-    const loadingComponent = loading && !comicsList.length ? <Spiner /> : null;
 
     return (
         <div className="comics__list">
-            {errorComponent}
-            {loadingComponent}
-            <TransitionGroup className="comics__grid" component="ul">
-                {comicsListComponent}
-            </TransitionGroup>
+            <ul className="comics__grid">{setComponentForList(state, comicsListComponent)}</ul>
             <button
                 className="button button__main button__long"
                 disabled={btnLoading}

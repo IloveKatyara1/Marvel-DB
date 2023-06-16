@@ -1,25 +1,24 @@
 import { useState } from 'react';
 
 export const useHttp = () => {
-    const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [state, setState] = useState('waiting');
 
     const getData = async (url) => {
-        setLoading(true);
+        try {
+            setState('loading');
 
-        const res = await fetch(url);
+            const res = await fetch(url);
 
-        if (!res.ok) {
-            setError(true);
-            setLoading(false);
-            return null;
+            return await res.json();
+        } catch (e) {
+            setState('error');
+            throw new Error('something went wrong, try again later');
         }
-
-        setLoading(false);
-        return await res.json();
     };
 
-    const resetError = () => setError(false);
+    const resetError = () => {
+        setState('loading');
+    };
 
-    return { error, loading, getData, resetError };
+    return { getData, resetError, state, setState };
 };

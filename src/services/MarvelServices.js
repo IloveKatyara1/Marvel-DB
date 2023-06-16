@@ -4,7 +4,7 @@ const useMarvelServices = () => {
     const _apiUrl = 'https://gateway.marvel.com:443/v1/public/';
     const _apiKey = 'apikey=d5d627eb28d69a7a44dd190b11e467a1';
 
-    const { error, loading, getData, resetError } = useHttp();
+    const { getData, resetError, state, setState } = useHttp();
 
     const getAllCharacterOrComics = async (charterOrComics, offset, limit = 9) => {
         const res = await getData(`${_apiUrl}${charterOrComics}?limit=${limit}&offset=${offset}&${_apiKey}`);
@@ -83,7 +83,7 @@ const useMarvelServices = () => {
         }
     };
 
-    return { getOneElement, getAllCharacterOrComics, error, loading, resetError, getCharByName };
+    return { getOneElement, getAllCharacterOrComics, resetError, getCharByName, state, setState };
 };
 
 export default useMarvelServices;

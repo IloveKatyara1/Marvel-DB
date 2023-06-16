@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
+
 import PropTypes from 'prop-types';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import useMarvelServices from '../../services/MarvelServices';
+import { setComponentForList } from '../../utils/setComponent';
+
+import SingleChar from './SingleChar';
 
 import './charList.scss';
-import Spiner from '../spiner/Spinner';
-import Error from '../errorGif/ErrorGif';
+
 import { charListContext } from '../app/App';
 
 const CharList = ({ onChangeCharSelect }) => {
@@ -18,30 +20,9 @@ const CharList = ({ onChangeCharSelect }) => {
 
     const itemsRef = useRef([]);
 
-    const [charListComponent, setCharListComponent] = useState(
-        charList.map((char, i) => (
-            <li
-                className="char__item"
-                key={char.id}
-                ref={(el) => (itemsRef.current[i] = el)}
-                tabIndex={i + 8}
-                onClick={() => {
-                    onChangeCharSelect(char.id);
-                    changeActiveChar(i);
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        changeActiveChar(i);
-                        onChangeCharSelect(char.id);
-                    }
-                }}>
-                <img src={char.thumbnail} style={char.styleImg} alt={char.name} />
-                <div className="char__name">{char.name.length >= 36 ? char.name.slice(1, 36) + '...' : char.name}</div>
-            </li>
-        ))
-    );
+    const [charListComponent, setCharListComponent] = useState([...charList]);
 
-    const { getAllCharacterOrComics, error, loading } = useMarvelServices();
+    const { getAllCharacterOrComics, setState, state } = useMarvelServices();
     let wasMount = false;
 
     useEffect(() => {
@@ -54,44 +35,42 @@ const CharList = ({ onChangeCharSelect }) => {
     const addNewChar = async () => {
         setBtnLoading(true);
 
-        getAllCharacterOrComics('characters', offset).then((res) => {
-            setCharList((charList) => [...charList, ...res]);
-            setOffset((offset) => offset + 9);
-            setCharEnded(res.length < 9);
-            setBtnLoading(false);
-            res.forEach((char, i) =>
-                setTimeout(() => {
-                    setCharListComponent((prevCharListComponent) => {
-                        const updatedListComponent = [...prevCharListComponent];
-                        updatedListComponent.push(
-                            <CSSTransition timeout={500} classNames="char__item" key={char.id} in={true}>
-                                <li
-                                    className="char__item"
-                                    key={char.id}
-                                    ref={(el) => (itemsRef.current[prevCharListComponent.length] = el)}
-                                    tabIndex={prevCharListComponent.length + 8}
-                                    onClick={() => {
-                                        onChangeCharSelect(char.id);
-                                        changeActiveChar(prevCharListComponent.length);
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            changeActiveChar(prevCharListComponent.length);
-                                            onChangeCharSelect(char.id);
-                                        }
-                                    }}>
-                                    <img src={char.thumbnail} style={char.styleImg} alt={char.name} />
-                                    <div className="char__name">
-                                        {char.name.length >= 36 ? char.name.slice(1, 36) + '...' : char.name}
-                                    </div>
-                                </li>
-                            </CSSTransition>
-                        );
-                        return updatedListComponent;
-                    });
-                }, 100 * i)
-            );
-        });
+        getAllCharacterOrComics('characters', offset)
+            .then((res) => {
+                setOffset((offset) => offset + 9);
+                setCharEnded(res.length < 9);
+                setBtnLoading(false);
+
+                const newChars = res.map((char, i) => (
+                    <SingleChar
+                        charListComponent={charListComponent}
+                        itemsRef={itemsRef}
+                        char={char}
+                        i={i}
+                        onChangeCharSelect={onChangeCharSelect}
+                        changeActiveChar={changeActiveChar}
+                        key={char.id}
+                    />
+                ));
+
+                setCharList((charList) => [
+                    ...charList,
+                    ...res.map((char, i) => (
+                        <SingleChar
+                            charListComponent={charListComponent}
+                            itemsRef={itemsRef}
+                            char={char}
+                            i={i}
+                            onChangeCharSelect={onChangeCharSelect}
+                            changeActiveChar={changeActiveChar}
+                            key={char.id}
+                            whithoutEffect={true}
+                        />
+                    )),
+                ]);
+                setCharListComponent((charListComponent) => [...charListComponent, ...newChars]);
+            })
+            .then(() => setState('success'));
     };
 
     const changeActiveChar = (num) => {
@@ -99,18 +78,9 @@ const CharList = ({ onChangeCharSelect }) => {
         itemsRef.current[num].classList.add('char__item_selected');
     };
 
-    const loadingComponent = loading && !charList.length ? <Spiner /> : null;
-    const errorComponent = error ? <Error /> : null;
-
     return (
         <div className="char__list">
-            <ul className="char__grid">
-                {loadingComponent}
-                {errorComponent}
-                <TransitionGroup className="char__grid" component="ul">
-                    {charListComponent}
-                </TransitionGroup>
-            </ul>
+            <ul className="char__grid">{setComponentForList(state, charListComponent)}</ul>
             <button
                 className="button button__main button__long"
                 onClick={addNewChar}

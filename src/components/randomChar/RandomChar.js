@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import useMarvelServices from '../../services/MarvelServices';
-import Spiner from '../spiner/Spinner';
-import Error from '../errorGif/ErrorGif';
+import { setComponent } from '../../utils/setComponent';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -12,35 +11,19 @@ const RandomChar = (props) => {
 
     useEffect(() => getDataForRndChar(), []);
 
-    const { getOneElement, error, loading, resetError } = useMarvelServices();
+    const { getOneElement, state, setState, resetError } = useMarvelServices();
 
     const getDataForRndChar = () => {
-        getOneElement(Math.floor(Math.random() * (1011400 - 1011000) + 1011000)).then(setChar);
+        getOneElement(Math.floor(Math.random() * (1011400 - 1011000) + 1011000))
+            .then(setChar)
+            .then(() => setState('success'));
     };
 
     return (
         <div className="randomchar">
-            {loading ? (
-                <Spiner />
-            ) : error ? (
-                <Error />
-            ) : (
-                <div className="randomchar__block">
-                    <img src={char.thumbnail} style={char.styleImg} alt={char.name} className="randomchar__img" />
-                    <div className="randomchar__info">
-                        <p className="randomchar__name">{char.name}</p>
-                        <p className="randomchar__descr">{char.descr}</p>
-                        <div className="randomchar__btns">
-                            <a href={char.detail} className="button button__main" tabIndex={3}>
-                                <div className="inner">homepage</div>
-                            </a>
-                            <a href={char.wiki} className="button button__secondary" tabIndex={4}>
-                                <div className="inner">Wiki</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {setComponent(state, () => (
+                <View char={char} />
+            ))}
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!
@@ -58,6 +41,26 @@ const RandomChar = (props) => {
                     <div className="inner">try it</div>
                 </button>
                 <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
+            </div>
+        </div>
+    );
+};
+
+const View = ({ char }) => {
+    return (
+        <div className="randomchar__block">
+            <img src={char.thumbnail} style={char.styleImg} alt={char.name} className="randomchar__img" />
+            <div className="randomchar__info">
+                <p className="randomchar__name">{char.name}</p>
+                <p className="randomchar__descr">{char.descr}</p>
+                <div className="randomchar__btns">
+                    <a href={char.detail} className="button button__main" tabIndex={3}>
+                        <div className="inner">homepage</div>
+                    </a>
+                    <a href={char.wiki} className="button button__secondary" tabIndex={4}>
+                        <div className="inner">Wiki</div>
+                    </a>
+                </div>
             </div>
         </div>
     );

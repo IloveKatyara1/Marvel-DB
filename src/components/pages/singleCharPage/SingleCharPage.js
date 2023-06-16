@@ -3,10 +3,9 @@ import { useEffect, useContext } from 'react';
 import { Helmet } from 'react-helmet';
 
 import useMarvelServices from '../../../services/MarvelServices';
+import { setComponent } from '../../../utils/setComponent';
 
 import AppBanner from '../../appBanner/AppBanner';
-import Error from '../../errorGif/ErrorGif';
-import Spinner from '../../spiner/Spinner';
 
 import { singleChar } from '../../app/App';
 
@@ -14,7 +13,7 @@ import './singleCharPage.scss';
 
 const SingleComicPage = () => {
     const { chartherName } = useParams();
-    const { loading, error, resetError, getCharByName } = useMarvelServices();
+    const { state, setState, resetError, getCharByName } = useMarvelServices();
 
     const { dataSingleChar, setDataSingleChar } = useContext(singleChar);
 
@@ -25,7 +24,11 @@ const SingleComicPage = () => {
     const updataChar = () => {
         resetError();
         if (!dataSingleChar.isFromSearch) {
-            getCharByName(chartherName).then(onCharLoaded);
+            getCharByName(chartherName)
+                .then(onCharLoaded)
+                .then(() => setState('success'));
+        } else {
+            setState('success');
         }
     };
 
@@ -33,16 +36,12 @@ const SingleComicPage = () => {
         setDataSingleChar(char);
     };
 
-    const errorMessage = error ? <Error /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error || !dataSingleChar.name) ? <View dataSingleChar={dataSingleChar} /> : null;
-
     return (
         <>
             <AppBanner />
-            {errorMessage}
-            {spinner}
-            {content}
+            {setComponent(state, () => (
+                <View dataSingleChar={dataSingleChar} />
+            ))}
         </>
     );
 };

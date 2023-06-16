@@ -1,3 +1,14 @@
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .comics {
     &__list {
         margin-top: 45px;
@@ -51,4 +62,16 @@
             transition: opacity 500ms, transform 500ms;
         }
     }
+}
+
+.opacity {
+    opacity: 0;
+}
+
+.effect {
+    animation: fade-in 600ms;
+}
+
+.whithoutOpacity {
+    opacity: 1;
 }

@@ -1,5 +1,16 @@
 @import '../../style/variables.scss';
 
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .char {
     &__content {
         margin-top: 50px;
@@ -62,4 +73,16 @@
     .char__item:focus {
         outline: 2px solid blue;
     }
+}
+
+.opacity {
+    opacity: 0;
+}
+
+.effect {
+    animation: fade-in 600ms;
+}
+
+.whithoutOpacity {
+    opacity: 1;
 }
